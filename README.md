@@ -59,6 +59,97 @@ vue -> ../lib/node_modules/@vue/cli/bin/vue.js
     - 随后在 **/usr/local/bin** 下根据 **bin** 对应的配置，配置好 **@vue/cli** 的执行命令名称和软链接。
 
 ### 执行 **vue** 命令时发生了什么？
+
+命令行执行 **vue** 命令时：
+其实相当于执行 **which vue** 找到的路径:
+
+```
+$ /usr/local/bin/vue
+```
+
+随后因为 vue 命令是一个软链接：
+
+```
+vue -> ../lib/node_modules/@vue/cli/bin/vue.js
+```
+
+故命令行执行 **vue** 命令，实则本质上是执行：
+
+```
+$ /usr/local/lib/node_modules/@vue/cli/bin/vue.js
+```
+
 ### 为什么 **vue** 指向一个 **js** 文件，我们却可以直接通过 **vue** 命令去执行它？
 
-...
+承接上文，得出疑问：
+为什么 **vue** 指向一个 **js** 文件，我们却可以直接通过 **vue** 命令去执行它？
+毕竟平时命令行执行 **js** 文件，都是需要通过 **node** 去执行的，比如：
+
+```
+$ node xxx.js
+```
+
+---
+
+原因： **vue.js** 文件的第一行标注了 **执行方法**：
+
+```js
+#!/usr/bin/env node
+
+//...
+```
+
+这一句配置了执行方法，代表当我们操作系统 **命令行** 执行：
+
+```
+$ ./vue.js
+```
+
+调用这个文件时：
+
+- 会去 **环境变量** 中找 **node** 命令：
+  - 并使用找到的命令去执行此文件。
+- 若是 **py** 文件，就写 **#!/usr/bin/env python**。
+
+---
+
+- 此时，我们已经可以通过 **./vue.js** 的方式去直接执行 **vue.js** 文件了。
+  - 但是需求是直接用 **vue** 命令执行，怎么做呢？
+    - 只需要去到 **/usr/local/bin** 目录下，创建一个名为 **vue** 的命令。
+      - 而且**vue** 的命令实则为一个软链接，需指向 **../lib/node_modules/@vue/cli/bin/vue.js**。
+- 所以一共需要两步：
+  1. 创建一个名为 **vue** 的命令。
+  2. 为 **vue** 命令设置软链接，指向 **../lib/node_modules/@vue/cli/bin/vue.js**。
+- 具体操作如下:
+
+```
+$ ln -s /usr/local/lib/node_modules/@vue/cli/bin/vue.js vue
+```
+
+> 上述操作，推荐实践以下，自己创建一个 **test.js** 去体验，加深理解。
+
+---
+
+#### 小知识点
+
+记得，执行的 **js** 文件需要可执行权限，不然提示如下报错：
+
+```
+$ ./test.js
+zsh: permission denied: ./test.js
+```
+
+---
+
+添加权限：
+
+```
+$ chmod 777 test.js
+```
+
+随后用 **ll** 查看执行权限,即可看到：
+
+```
+$ ll
+-rwxrwxrwx  1 chenhui  staff    48B  4 21 23:13 test.js
+```
