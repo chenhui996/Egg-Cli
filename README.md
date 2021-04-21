@@ -42,9 +42,9 @@ vue -> ../lib/node_modules/@vue/cli/bin/vue.js
 ```
 
 - 如上易知，在 **bin** 下配置了 **vue** 的配置项，将二者相关联了起来。
-  - 使得 **/usr/local/bin** 下的 **vue** 命令可以链接到 **vue.js** 中去执行。
+  - 使得 **/usr/local/bin** 下的 **vue** 命令可以链接到 **vue.js** 中去执行, 且配置好 **@vue/cli** 的执行命令。
 
-> 至于 vue 名称的确定，取决于 **/usr/local/bin** 下的 **vue** 名称，可更改此名称实现 '命令名称' 的更改。
+> 若是安装完包后，想自定义**@vue/cli** 的执行命令，可修改 **/usr/local/bin** 下的 **vue** 名称，实现 '命令名称' 的更改。
 
 ### 全局安装 **@vue/cli** 时发生了什么？
 
