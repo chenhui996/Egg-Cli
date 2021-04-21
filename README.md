@@ -48,7 +48,15 @@ vue -> ../lib/node_modules/@vue/cli/bin/vue.js
 
 #### 全局安装 **@vue/cli** 时发生了什么？
 
-...
+上面其实，原理已经说的差不多了，我们从流程角度说说，全局安装 **@vue/cli** 时发生了什么：
+
+全局安装 **@vue/cli** 时:
+**node** 会将 **@vue/cli** 这个包放到 **/user/local/lib** 下的 **/node_modules** 当中。
+
+- 当包完全下载完毕后：
+  - **node** 会去解析 **/node_modules/@vue/cli** 下 **package.json** 文件中的 **bin** 配置。
+  - 其中，找到 **"vue": "bin/vue.js"**，即为 **vue** 命令的配置项。
+    - 随后在 **/usr/local/bin** 下根据 **bin** 对应的配置，配置好 **@vue/cli** 的执行命令名称和软链接。
 
 #### 执行 **vue** 命令时发生了什么？为什么 **vue** 指向一个 **js** 文件，我们却可以直接通过 **vue** 命令去执行它？
 
