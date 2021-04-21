@@ -17,7 +17,7 @@ npm install -g @vue/cli
 ### 为什么全局安装 **@vue/cli** 后，操作系统中会添加一个 **vue** 的命令？
 
 全局安装 **@vue/cli** 后:
-会在 本地全局 **node** 下的 **node-modules** 创建一个 **vue** 的软连接，指向：
+会在 本地全局 **node** 下的 **node-modules** 创建一个 **vue** 的软链接，指向：
 
 ```
 vue -> ../lib/node_modules/@vue/cli/bin/vue.js
@@ -126,7 +126,7 @@ $ ./vue.js
 $ ln -s /usr/local/lib/node_modules/@vue/cli/bin/vue.js vue
 ```
 
-> 上述操作，推荐实践以下，自己创建一个 **test.js** 去体验，加深理解。
+> 上述操作，推荐动手实践敲一敲，自己创建一个 **test.js** 去体验，加深理解。
 
 ---
 
