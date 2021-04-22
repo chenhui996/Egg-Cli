@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-console.log('welcome egg-cli-test');
+console.log('welcome egg-cli-test-ass');

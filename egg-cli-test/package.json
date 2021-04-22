@@ -1,6 +1,6 @@
 {
   "name": "egg-cli-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "bin": {
     "egg-cli-test": "bin/index.js"
@@ -11,5 +11,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {}
 }
