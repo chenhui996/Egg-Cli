@@ -6,6 +6,9 @@
   "homepage": "https://github.com/chenhui996/egg-cli#readme",
   "license": "ISC",
   "main": "lib/core.js",
+  "bin": {
+    "egg-cli-dev": "bin/index.js"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -29,5 +32,5 @@
   "dependencies": {
     "@egg-cli-dev/utils": "^1.0.2"
   },
-  "gitHead": "259fef25654ff2152dcaa005ba92346066078183"
+  "gitHead": "fd0bcabbe9419c651ee61e95f6c1f4695c9b64b0"
 }
