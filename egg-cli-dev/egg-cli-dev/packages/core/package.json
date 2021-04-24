@@ -1,6 +1,6 @@
 {
   "name": "@egg-cli-dev/core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "egg-cli-dev core",
   "author": "cain <chen562450669@qq.com>",
   "homepage": "https://github.com/chenhui996/egg-cli#readme",
@@ -27,7 +27,7 @@
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
   "dependencies": {
-    "@egg-cli-dev/utils": "^1.0.1"
+    "@egg-cli-dev/utils": "^1.0.2"
   },
   "gitHead": "259fef25654ff2152dcaa005ba92346066078183"
 }
