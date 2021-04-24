@@ -28,5 +28,6 @@
   },
   "dependencies": {
     "@egg-cli-dev/utils": "^1.0.1"
-  }
+  },
+  "gitHead": "259fef25654ff2152dcaa005ba92346066078183"
 }
