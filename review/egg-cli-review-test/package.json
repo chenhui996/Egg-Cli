@@ -1,9 +1,9 @@
 {
-  "name": "egg-cli-test",
-  "version": "1.0.3",
+  "name": "egg-cli-review-test",
+  "version": "1.0.2",
   "description": "",
   "bin": {
-    "egg-cli-test": "bin/index.js"
+    "egg-cli-review-test": "bin/index.js"
   },
   "main": "index.js",
   "scripts": {
@@ -13,8 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dedent": "^0.7.0",
-    "egg-cli-test-lib": "^1.1.0",
-    "yargs": "^16.2.0"
+    "egg-cli-review-test-lib": "^1.0.1"
   }
 }
