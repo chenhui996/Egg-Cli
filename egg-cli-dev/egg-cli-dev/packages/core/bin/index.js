@@ -1,3 +1,7 @@
 #! /usr/bin/env node
 
-console.log('hello egg-cli');
+const utils = require('@egg-cli-dev/utils')
+
+utils()
+
+console.log('hello egg-cli')

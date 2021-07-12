@@ -31,7 +31,7 @@
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
   "dependencies": {
-    "@egg-cli-dev/utils": "^1.0.5"
+    "@egg-cli-dev/utils": "file:../utils"
   },
   "gitHead": "01c27d2a5d243c53b0a6970954dfb442769cb8d6"
 }
