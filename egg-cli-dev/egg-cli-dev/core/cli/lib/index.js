@@ -18,9 +18,16 @@ function core() {
   try {
     checkPkgVersion()
     checkNodeVersion()
+    checkRoot()
   } catch (e) {
     log.error(e.message)
   }
+}
+
+// 检查 root 账户 -> 自动降级
+function checkRoot() {
+  const rootCheck = require('root-check')
+  rootCheck()
 }
 
 // 检查 node 版本号
