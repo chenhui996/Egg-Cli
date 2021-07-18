@@ -1,11 +1,11 @@
-# `core`
+# `@egg-cli-dev/log`
 
 > TODO: description
 
 ## Usage
 
 ```
-const core = require('core');
+const log = require('@egg-cli-dev/log');
 
 // TODO: DEMONSTRATE API
 ```

@@ -1,14 +1,14 @@
 {
-  "name": "@egg-cli-dev/core",
+  "name": "@egg-cli-dev/log",
   "version": "1.0.5",
-  "description": "egg-cli-dev core",
+  "description": "> TODO: description",
+  "keywords": [
+    "log"
+  ],
   "author": "cain <chen562450669@qq.com>",
   "homepage": "https://github.com/chenhui996/egg-cli#readme",
   "license": "ISC",
-  "main": "lib/core.js",
-  "bin": {
-    "egg-cli-dev": "bin/index.js"
-  },
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -17,8 +17,7 @@
     "lib"
   ],
   "publishConfig": {
-    "registry": "http://registry.npmjs.org/",
-    "access": "public"
+    "registry": "http://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
@@ -31,7 +30,6 @@
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
   "dependencies": {
-    "@egg-cli-dev/utils": "file:../utils"
-  },
-  "gitHead": "01c27d2a5d243c53b0a6970954dfb442769cb8d6"
+    "npmlog": "^4.1.2"
+  }
 }
