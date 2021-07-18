@@ -7,20 +7,30 @@ module.exports = core
 // .json -> JSON.parse
 // .node -> process.dlopen (基本不用)
 // .any  -> .js
-const pkg = require('../package.json')
 const semver = require('semver')
 const colors = require('colors/safe')
-
+const userHome = require('user-home')
+const pathExists = require('path-exists').sync
 const log = require('@egg-cli-dev/log')
+
 const constant = require('./const') // 环境变量
+const pkg = require('../package.json')
 
 function core() {
   try {
     checkPkgVersion()
     checkNodeVersion()
     checkRoot()
+    checkUserHome()
   } catch (e) {
     log.error(e.message)
+  }
+}
+
+// 检查用户主目录
+function checkUserHome() {
+  if(!userHome || !pathExists(userHome)){
+    throw new Error(colors.red('当前登陆用户主目录不存在'))
   }
 }
 
