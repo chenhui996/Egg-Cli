@@ -7,6 +7,7 @@ module.exports = core
 // .json -> JSON.parse
 // .node -> process.dlopen (基本不用)
 // .any  -> .js
+const path = require('path')
 const semver = require('semver')
 const colors = require('colors/safe')
 const userHome = require('user-home')
@@ -16,7 +17,7 @@ const log = require('@egg-cli-dev/log')
 const constant = require('./const') // 环境变量
 const pkg = require('../package.json')
 
-let args
+let args, config
 
 function core() {
   try {
@@ -26,9 +27,36 @@ function core() {
     checkUserHome()
     checkInputArgs()
     log.verbose('debug', 'test debug log')
+    checkEnv()
   } catch (e) {
     log.error(e.message)
   }
+}
+
+// 检查环境变量
+function checkEnv() {
+  const dotenv = require('dotenv')
+  const dotenvPath = path.resolve(userHome, '.env')
+  if (pathExists(dotenvPath)) {
+    config = dotenv.config({
+      path: dotenvPath,
+    })
+  }
+  createDefaultConfig()
+  log.verbose('环境变量', process.env.CLI_HOME_PATH)
+}
+
+function createDefaultConfig() {
+  const cliConfig = {
+    home: userHome,
+  }
+
+  if (process.env.CLI_HOME) {
+    cliConfig['cliHome'] = path.join(userHome, process.env.CLI_HOME)
+  } else {
+    cliConfig['cliHome'] = path.join(userHome, constant.DEFAULT_CLI_HOME)
+  }
+  process.env.CLI_HOME_PATH = cliConfig.cliHome
 }
 
 // 检查入参
@@ -39,10 +67,9 @@ function checkInputArgs() {
 }
 
 function checkArgs() {
-  if(args.debug){
+  if (args.debug) {
     process.env.LOG_LEVEL = 'verbose'
-  }
-  else{
+  } else {
     process.env.LOG_LEVEL = 'info'
   }
   log.level = process.env.LOG_LEVEL
