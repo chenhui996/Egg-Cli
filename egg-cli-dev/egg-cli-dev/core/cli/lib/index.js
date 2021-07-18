@@ -17,9 +17,9 @@ const log = require('@egg-cli-dev/log')
 const constant = require('./const') // 环境变量
 const pkg = require('../package.json')
 
-let args, config
+let args
 
-function core() {
+async function core() {
   try {
     checkPkgVersion()
     checkNodeVersion()
@@ -28,8 +28,30 @@ function core() {
     checkInputArgs()
     log.verbose('debug', 'test debug log')
     checkEnv()
+    await checkGlobalUpdate()
   } catch (e) {
     log.error(e.message)
+  }
+}
+
+// 检查是否需要进行全局更新 -> cli 版本
+async function checkGlobalUpdate() {
+  // 获取当前版本号和模块名
+  const currentVersion = pkg.version
+  const npmName = pkg.name
+  // 调用 npm API, 获取所有版本号 -> https://registry.npmjs.org/@egg-cli-dev/core
+  // 提取所有版本号，比对哪些版本号是大于当前版本号
+  // 获取最新的版本号，提示用户更新到该版本
+  const {getNpmSemverVersion} = require('@egg-cli-dev/get-npm-info')
+  const lastVersions = await getNpmSemverVersion(currentVersion, npmName)
+  if (lastVersions && semver.gt(lastVersions, currentVersion)) {
+    log.warn(
+      '更新提示',
+      colors.yellow(
+        `请手动更新 ${npmName}，当前版本：${currentVersion}，最新版本：${lastVersions}
+更新命令： npm install -g ${npmName}`,
+      ),
+    )
   }
 }
 
@@ -38,7 +60,7 @@ function checkEnv() {
   const dotenv = require('dotenv')
   const dotenvPath = path.resolve(userHome, '.env')
   if (pathExists(dotenvPath)) {
-    config = dotenv.config({
+    dotenv.config({
       path: dotenvPath,
     })
   }
@@ -103,6 +125,6 @@ function checkNodeVersion() {
 // 检查版本号
 function checkPkgVersion() {
   // console.log(pkg.version)
-  log.success('cli start test', 'test success...')
+  // log.success('cli start test', 'test success...')
   log.notice('cli', pkg.version)
 }
