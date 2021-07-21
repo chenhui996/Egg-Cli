@@ -12,12 +12,19 @@ const semver = require('semver')
 const colors = require('colors/safe')
 const userHome = require('user-home')
 const pathExists = require('path-exists').sync
+const commander = require('commander')
 const log = require('@egg-cli-dev/log')
+const init = require('@egg-cli-dev/init')
 
 const constant = require('./const') // 环境变量
 const pkg = require('../package.json')
+const {verbose} = require('@egg-cli-dev/log')
+const {info} = require('console')
 
 let args
+
+// 实例化一个 command
+const program = new commander.Command()
 
 async function core() {
   try {
@@ -25,12 +32,55 @@ async function core() {
     checkNodeVersion()
     checkRoot()
     checkUserHome()
-    checkInputArgs()
-    log.verbose('debug', 'test debug log')
+    // checkInputArgs()
+    // log.verbose('debug', 'test debug log')
     checkEnv()
     await checkGlobalUpdate()
+    registerCommand()
   } catch (e) {
     log.error(e.message)
+  }
+}
+
+// 命令注册
+function registerCommand() {
+  program
+    .name(Object.keys(pkg.bin)[0])
+    .usage('<command> [options]')
+    .version(pkg.version)
+    .option('-d, --debug', '开启调试模式', false)
+
+  program
+    .command('init [projectName')
+    .option('-f, --force', '是否强制初始化项目')
+    .action(init)
+
+  // 开启 debug 模式
+  program.on('option:debug', () => {
+    if (program.debug) {
+      process.env.LOG_LEVEL = verbose
+    } else {
+      process.env.LOG_LEVEL = info
+    }
+
+    log.level = process.env.LOG_LEVEL
+    log.verbose('test')
+  })
+
+  // 对未知命令进行监听
+  program.on('command:*', (obj) => {
+    const availableCommands = program.commands.map((cmd) => cmd.name())
+    console.log(colors.red(`未知的命令：${obj[0]}`))
+    console.log(
+      `可用命令：${
+        availableCommands.length > 0 ? availableCommands.join(',') : '暂无'
+      }`,
+    )
+  })
+
+  program.parse(process.argv)
+  if (program.args && program.args.length < 1) {
+    program.outputHelp()
   }
 }
 

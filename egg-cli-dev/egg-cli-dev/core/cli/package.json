@@ -31,9 +31,11 @@
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
   "dependencies": {
-    "@egg-cli-dev/log": "file:../../utils/log",
     "@egg-cli-dev/get-npm-info": "file:../../utils/get-npm-info",
+    "@egg-cli-dev/log": "file:../../utils/log",
+    "@egg-cli-dev/init": "file:../../commands/init",
     "colors": "^1.4.0",
+    "commander": "^8.0.0",
     "dotenv": "^10.0.0",
     "import-local": "^3.0.2",
     "minimist": "^1.2.5",
