@@ -73,7 +73,7 @@ program.on('option:debug', () => {
   if (program.opts().debug) {
     process.env.LOG_LEVEL = 'verbose'
   }
-  console.log(process.env.LOG_LEVEL);
+  // console.log(process.env.LOG_LEVEL);
 })
 
 // 高级定制：未知命令监听
