@@ -18,24 +18,13 @@ const init = require('@egg-cli-dev/init')
 
 const constant = require('./const') // 环境变量
 const pkg = require('../package.json')
-const {verbose} = require('@egg-cli-dev/log')
-const {info} = require('console')
-
-let args
 
 // 实例化一个 command
 const program = new commander.Command()
 
 async function core() {
   try {
-    checkPkgVersion()
-    checkNodeVersion()
-    checkRoot()
-    checkUserHome()
-    // checkInputArgs()
-    // log.verbose('debug', 'test debug log')
-    checkEnv()
-    await checkGlobalUpdate()
+    await prepare()
     registerCommand()
   } catch (e) {
     log.error(e.message)
@@ -49,22 +38,29 @@ function registerCommand() {
     .usage('<command> [options]')
     .version(pkg.version)
     .option('-d, --debug', '开启调试模式', false)
+    .option('-tp, --targetPath <targetPath>', '是否指定本地调试文件路径', '')
 
   program
-    .command('init [projectName')
+    .command('init [projectName]')
     .option('-f, --force', '是否强制初始化项目')
     .action(init)
 
   // 开启 debug 模式
   program.on('option:debug', () => {
     if (program.debug) {
-      process.env.LOG_LEVEL = verbose
+      process.env.LOG_LEVEL = 'verbose'
     } else {
-      process.env.LOG_LEVEL = info
+      process.env.LOG_LEVEL = 'info'
     }
 
     log.level = process.env.LOG_LEVEL
     log.verbose('test')
+  })
+
+  // 指定 targetPath
+  program.on('option:targetPath', () => {
+    // 环境变量 -> 业务逻辑解耦 -> 最佳实践
+    process.env.CLI_TARGET_PATH = program.targetPath
   })
 
   // 对未知命令进行监听
@@ -82,6 +78,16 @@ function registerCommand() {
   if (program.args && program.args.length < 1) {
     program.outputHelp()
   }
+}
+
+// cli 启动阶段
+async function prepare() {
+  checkPkgVersion()
+  checkNodeVersion()
+  checkRoot()
+  checkUserHome()
+  checkEnv()
+  await checkGlobalUpdate()
 }
 
 // 检查是否需要进行全局更新 -> cli 版本
@@ -115,7 +121,6 @@ function checkEnv() {
     })
   }
   createDefaultConfig()
-  log.verbose('环境变量', process.env.CLI_HOME_PATH)
 }
 
 function createDefaultConfig() {
@@ -129,22 +134,6 @@ function createDefaultConfig() {
     cliConfig['cliHome'] = path.join(userHome, constant.DEFAULT_CLI_HOME)
   }
   process.env.CLI_HOME_PATH = cliConfig.cliHome
-}
-
-// 检查入参
-function checkInputArgs() {
-  const minimist = require('minimist')
-  args = minimist(process.argv.slice(2))
-  checkArgs()
-}
-
-function checkArgs() {
-  if (args.debug) {
-    process.env.LOG_LEVEL = 'verbose'
-  } else {
-    process.env.LOG_LEVEL = 'info'
-  }
-  log.level = process.env.LOG_LEVEL
 }
 
 // 检查用户主目录
