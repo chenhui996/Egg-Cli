@@ -15,6 +15,7 @@ const pathExists = require('path-exists').sync
 const commander = require('commander')
 const log = require('@egg-cli-dev/log')
 const init = require('@egg-cli-dev/init')
+const exec = require('@egg-cli-dev/exec')
 
 const constant = require('./const') // 环境变量
 const pkg = require('../package.json')
@@ -43,7 +44,7 @@ function registerCommand() {
   program
     .command('init [projectName]')
     .option('-f, --force', '是否强制初始化项目')
-    .action(init)
+    .action(exec)
 
   // 开启 debug 模式
   program.on('option:debug', () => {

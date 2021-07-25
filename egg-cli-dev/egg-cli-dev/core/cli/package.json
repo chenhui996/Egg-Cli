@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@egg-cli-dev/get-npm-info": "file:../../utils/get-npm-info",
+    "@egg-cli-dev/exec": "file:../exec",
     "@egg-cli-dev/log": "file:../../utils/log",
     "@egg-cli-dev/init": "file:../../commands/init",
     "colors": "^1.4.0",
