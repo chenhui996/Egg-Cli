@@ -27,8 +27,10 @@
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
   "dependencies": {
-    "@egg-cli-dev/utils": "file:../../utils/utils",
     "@egg-cli-dev/format-path": "file:../../utils/format-path",
+    "@egg-cli-dev/utils": "file:../../utils/utils",
+    "@egg-cli-dev/get-npm-info": "file:../../utils/get-npm-info",
+    "npminstall": "^4.11.0",
     "pkg-dir": "^5.0.0"
   }
 }

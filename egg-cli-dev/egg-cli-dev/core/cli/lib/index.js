@@ -29,6 +29,9 @@ async function core() {
     registerCommand()
   } catch (e) {
     log.error(e.message)
+    if (process.debug) {
+      console.log(e)
+    }
   }
 }
 
@@ -128,7 +131,6 @@ function createDefaultConfig() {
   const cliConfig = {
     home: userHome,
   }
-
   if (process.env.CLI_HOME) {
     cliConfig['cliHome'] = path.join(userHome, process.env.CLI_HOME)
   } else {

@@ -1,9 +1,10 @@
 'use strict'
 const path = require('path')
 const pkgDir = require('pkg-dir').sync
-
+const npminstall = require('npminstall')
 const {isObject} = require('@egg-cli-dev/utils')
 const formatPath = require('@egg-cli-dev/format-path')
+const {getDefaultRegistry} = require('@egg-cli-dev/get-npm-info')
 
 class Package {
   constructor(options) {
@@ -15,6 +16,8 @@ class Package {
     }
     // package 的目标路径
     this.targetPath = options.targetPath
+    // package 的缓存路径
+    this.storeDir = options.storeDir
     // package 的 name
     this.packageName = options.packageName
     // package 的 version
@@ -25,7 +28,14 @@ class Package {
   exists() {}
 
   // 安装 Package
-  install() {}
+  install() {
+    return npminstall({
+      root: this.targetPath,
+      storeDir: this.storeDir,
+      registpty: getDefaultRegistry(),
+      pkgs: [{name: this.packageName, version: this.packageVersion}],
+    })
+  }
 
   // 更新 Package
   update() {}
