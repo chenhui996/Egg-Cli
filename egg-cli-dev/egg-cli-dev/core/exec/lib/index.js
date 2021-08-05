@@ -1,5 +1,6 @@
 'use strict'
 
+const cp = require('child_process')
 const path = require('path')
 const Package = require('@egg-cli-dev/package')
 const log = require('@egg-cli-dev/log')
@@ -47,8 +48,48 @@ async function exec() {
   }
   const rootFile = pkg.getRootFilePath()
   if (rootFile) {
-    require(rootFile).apply(null, arguments)
+    try {
+      // 在当前进程中调用
+      // require(rootFile).call(null, Array.from(arguments))
+      // 在 node 子进程中调用
+      const args = Array.from(arguments)
+      const cmd = args[args.length - 1]
+      const o = Object.create(null)
+      Object.keys(cmd).forEach((key) => {
+        if (
+          cmd.hasOwnProperty(key) &&
+          key !== 'parent' &&
+          !key.startsWith('_')
+        ) {
+          o[key] = cmd[key]
+        }
+      })
+      args[args.length - 1] = o
+      const code = `require('${rootFile}').call(null, ${JSON.stringify(args)})`
+      const child = spawn('node', ['-e', code], {
+        cwd: process.cwd(), // 当前命令行所处路径（动态）
+        stdio: 'inherit',
+      })
+      child.on('error', (e) => {
+        log.error(e.message)
+        process.exit(1)
+      })
+      child.on('exit', (e) => {
+        log.error('命令执行成功', e)
+        process.exit(0)
+      })
+    } catch (error) {
+      log.error(error.message)
+    }
   }
+}
+
+function spawn(command, args, options) {
+  const win32 = process.platform === 'win32'
+  const cmd = win32 ? 'cmd' : command
+  const cmdArgs = win32 ? ['/c'].concat(cmd, args) : args
+
+  return cp.spawn(cmd, cmdArgs, options || {})
 }
 
 module.exports = exec

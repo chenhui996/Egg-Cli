@@ -87,7 +87,7 @@ function registerCommand() {
 // cli 启动阶段
 async function prepare() {
   checkPkgVersion()
-  checkNodeVersion()
+  // checkNodeVersion()
   checkRoot()
   checkUserHome()
   checkEnv()
@@ -150,18 +150,6 @@ function checkUserHome() {
 function checkRoot() {
   const rootCheck = require('root-check')
   rootCheck()
-}
-
-// 检查 node 版本号
-function checkNodeVersion() {
-  const currentVersion = process.version // 获取当前版本号
-  const lowestNodeVersion = constant.LOWEST_NODE_VERSION // 获取最低版本号
-  // 比对校验版本号 -> semver
-  if (!semver.gte(currentVersion, lowestNodeVersion)) {
-    throw new Error(
-      colors.red(`egg-cli 需要安装 v${lowestNodeVersion} 以上版本的 Node.js`),
-    )
-  }
 }
 
 // 检查版本号

@@ -77,7 +77,7 @@ class Package {
 
   // 更新 Package
   async update() {
-    await this.prepare() // 有必要吗？
+    await this.prepare() 
     let latestPackageVersion = await getNpmLatestVersion(this.packageName)
     let latestFilePath = this.getSpeficCacheFilePath(latestPackageVersion)
     if (!pathExists(latestFilePath)) {
