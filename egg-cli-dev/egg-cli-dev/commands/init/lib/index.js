@@ -3,8 +3,12 @@
 const fs = require('fs')
 const inquirer = require('inquirer')
 const fse = require('fs-extra')
+const semver = require('semver')
 const Command = require('@egg-cli-dev/command')
 const log = require('@egg-cli-dev/log')
+
+const TYPE_PROJECT = 'project'
+const TYPE_COMPONENT = 'component'
 
 class InitCommand extends Command {
   init() {
@@ -48,6 +52,7 @@ class InitCommand extends Command {
           return
         }
       }
+      // 2. 是否启动强制更新
       if (ifContinue || this.force) {
         // 启动强制更新 -> 二次确认
         const {confirmDelete} = await inquirer.prompt({
@@ -61,9 +66,88 @@ class InitCommand extends Command {
         }
       }
     }
-    // 2. 是否启动强制更新
-    // 3. 选择创建项目或组件
-    // 4. 获取项目的基本信息
+    return this.getProjectInfo()
+  }
+
+  async getProjectInfo() {
+    let projectInfo = {}
+    // 1. 选择创建项目或组件
+    const {type} = await inquirer.prompt({
+      type: 'list',
+      name: 'type',
+      message: '请选择初始化类型',
+      default: TYPE_PROJECT,
+      choices: [
+        {
+          name: '项目',
+          value: TYPE_PROJECT,
+        },
+        {
+          name: '组件',
+          value: TYPE_COMPONENT,
+        },
+      ],
+    })
+    log.verbose('type', type)
+    // 2. 获取项目的基本信息
+    if (type === TYPE_PROJECT) {
+      const project = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'projectName',
+          message: '请输入项目名称',
+          default: '',
+          validate: function (v) {
+            const done = this.async()
+            setTimeout(function () {
+              // 1.首字符必须为英文字符
+              // 2.尾字符必须为英文或数字，不能为字符
+              // 3.字符仅允许"-_"
+              if (
+                !/^[a-zA-Z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(
+                  v,
+                )
+              ) {
+                done('项目名称不合法')
+                return
+              }
+              done(null, true)
+            }, 0)
+          },
+          filter: function (v) {
+            return v
+          },
+        },
+        {
+          type: 'input',
+          name: 'projectVersion',
+          message: '请输入项目版本号',
+          default: '1.0.0',
+          validate: function (v) {
+            // return !!semver.valid(v)
+            const done = this.async()
+            setTimeout(function () {
+              if (!!!semver.valid(v)) {
+                done('版本号不合法')
+                return
+              }
+              done(null, true)
+            }, 0)
+          },
+          filter: function (v) {
+            if (!!semver.valid(v)) {
+              return semver.valid(v)
+            } else {
+              return v
+            }
+          },
+        },
+      ])
+      console.log(project)
+    } else if (type === TYPE_COMPONENT) {
+    }
+    // return 项目的基本信息（object）
+    return projectInfo
   }
 
   isDirEmpty(localPath) {
