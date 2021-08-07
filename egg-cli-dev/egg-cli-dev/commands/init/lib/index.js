@@ -143,10 +143,14 @@ class InitCommand extends Command {
           },
         },
       ])
-      console.log(project)
+      projectInfo = {
+        type,
+        ...project,
+      }
     } else if (type === TYPE_COMPONENT) {
     }
     // return 项目的基本信息（object）
+    console.log('projectInfo', projectInfo)
     return projectInfo
   }
 
