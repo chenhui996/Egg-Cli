@@ -31,6 +31,7 @@
     "@egg-cli-dev/log": "file:../../utils/log",
     "@egg-cli-dev/package": "file:../../models/package",
     "@egg-cli-dev/request": "file:../../utils/request",
+    "@egg-cli-dev/utils": "file:../../utils/utils",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.1.2",
     "semver": "^7.3.5",

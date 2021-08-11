@@ -7,8 +7,9 @@ const fse = require('fs-extra')
 const semver = require('semver')
 const userHome = require('user-home')
 const Command = require('@egg-cli-dev/command')
-const log = require('@egg-cli-dev/log')
 const Package = require('@egg-cli-dev/package')
+const log = require('@egg-cli-dev/log')
+const {spinnerStart, sleep} = require('@egg-cli-dev/utils')
 
 const getProjectTemplate = require('./getProjectTemplate')
 
@@ -33,11 +34,15 @@ class InitCommand extends Command {
         // 2. 下载模版
         await this.downloadTemplate()
         // 3. 安装模版
+        await this.installTemplate()
       }
     } catch (error) {
       log.error(error.message)
     }
   }
+
+  // 安装模版
+  async installTemplate() {}
 
   // 下载模版
   async downloadTemplate() {
@@ -65,11 +70,19 @@ class InitCommand extends Command {
     })
     // console.log(templateNpm);
     if (await templateNpm.exists()) {
+      const spinner = spinnerStart('正在更新模版...')
+      await sleep()
       // 更新 package
       await templateNpm.update()
+      spinner.stop(true)
+      log.success('更新模版成功')
     } else {
+      const spinner = spinnerStart('正在下载模版...')
+      await sleep()
       // 安装 package
       await templateNpm.install()
+      spinner.stop(true)
+      log.success('下载模版成功')
     }
   }
 

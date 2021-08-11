@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
-  "gitHead": "01c27d2a5d243c53b0a6970954dfb442769cb8d6"
+  "gitHead": "01c27d2a5d243c53b0a6970954dfb442769cb8d6",
+  "dependencies": {
+    "cli-spinner": "^0.2.10"
+  }
 }
