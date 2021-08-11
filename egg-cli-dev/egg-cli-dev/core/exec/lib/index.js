@@ -75,7 +75,7 @@ async function exec() {
         process.exit(1)
       })
       child.on('exit', (e) => {
-        log.error('命令执行成功', e)
+        log.notice('命令执行成功', e)
         process.exit(0)
       })
     } catch (error) {

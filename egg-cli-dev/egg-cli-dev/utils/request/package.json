@@ -1,7 +1,7 @@
 {
-  "name": "@egg-cli-dev/init",
+  "name": "@egg-cli-dev/request",
   "version": "1.0.0",
-  "description": "egg-cli-dev init",
+  "description": "> TODO: description",
   "author": "cain <chen562450669@qq.com>",
   "homepage": "https://github.com/chenhui996/egg-cli#readme",
   "license": "ISC",
@@ -27,13 +27,6 @@
     "url": "https://github.com/chenhui996/egg-cli/issues"
   },
   "dependencies": {
-    "@egg-cli-dev/command": "file:../../models/command",
-    "@egg-cli-dev/log": "file:../../utils/log",
-    "@egg-cli-dev/package": "file:../../models/package",
-    "@egg-cli-dev/request": "file:../../utils/request",
-    "fs-extra": "^10.0.0",
-    "inquirer": "^8.1.2",
-    "semver": "^7.3.5",
-    "user-home": "^3.0.0"
+    "axios": "^0.21.1"
   }
 }

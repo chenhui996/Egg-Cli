@@ -1,11 +1,16 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const inquirer = require('inquirer')
 const fse = require('fs-extra')
 const semver = require('semver')
+const userHome = require('user-home')
 const Command = require('@egg-cli-dev/command')
 const log = require('@egg-cli-dev/log')
+const Package = require('@egg-cli-dev/package')
+
+const getProjectTemplate = require('./getProjectTemplate')
 
 const TYPE_PROJECT = 'project'
 const TYPE_COMPONENT = 'component'
@@ -21,9 +26,12 @@ class InitCommand extends Command {
   async exec() {
     try {
       // 1. 准备阶段
-      const ret = await this.prepare()
-      if (ret) {
+      const projectInfo = await this.prepare()
+      if (projectInfo) {
+        log.verbose('projectInfo', projectInfo)
+        this.projectInfo = projectInfo
         // 2. 下载模版
+        await this.downloadTemplate()
         // 3. 安装模版
       }
     } catch (error) {
@@ -31,8 +39,49 @@ class InitCommand extends Command {
     }
   }
 
+  // 下载模版
+  async downloadTemplate() {
+    // 1. 通过项目模版 API 获取项目模版信息
+    // 1.1 通过 egg.js 搭建一套后端系统
+    // 1.2 通过 npm 存储项目模版
+    // 1.3 将项目模版信息存储到 mongodb 数据库中
+    // 1.4 通过 egg.js 获取 mongodb 中的数据并且通过 API 返回
+
+    // * -----------------------------------------------------------------
+
+    const {projectTemplate} = this.projectInfo
+    const templateInfo = this.template.find(
+      (item) => item.npmName === projectTemplate,
+    )
+    const targetPath = path.resolve(userHome, '.egg-cli-dev', 'template')
+    const storeDir = path.resolve(targetPath, 'node_modules')
+    const {npmName, version} = templateInfo
+
+    const templateNpm = new Package({
+      targetPath,
+      storeDir,
+      packageName: npmName,
+      packageVersion: version,
+    })
+    // console.log(templateNpm);
+    if (await templateNpm.exists()) {
+      // 更新 package
+      await templateNpm.update()
+    } else {
+      // 安装 package
+      await templateNpm.install()
+    }
+  }
+
   // 准备阶段
   async prepare() {
+    // 0. 判断项目模版是否存在
+    const template = await getProjectTemplate()
+    // console.log('template', template)
+    if (!template || template.length === 0) {
+      throw new Error('项目模版不存在')
+    }
+    this.template = template
     // 1. 判断当前目录是否为空
     const localPath = process.cwd()
     if (!this.isDirEmpty(localPath)) {
@@ -142,6 +191,12 @@ class InitCommand extends Command {
             }
           },
         },
+        {
+          type: 'list',
+          name: 'projectTemplate',
+          message: '请选择项目模版',
+          choices: this.createTemplateChoice(),
+        },
       ])
       projectInfo = {
         type,
@@ -150,8 +205,14 @@ class InitCommand extends Command {
     } else if (type === TYPE_COMPONENT) {
     }
     // return 项目的基本信息（object）
-    console.log('projectInfo', projectInfo)
     return projectInfo
+  }
+
+  createTemplateChoice() {
+    return this.template.map((item) => ({
+      value: item.npmName,
+      name: item.name,
+    }))
   }
 
   isDirEmpty(localPath) {
