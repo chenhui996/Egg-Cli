@@ -72,17 +72,27 @@ class InitCommand extends Command {
     if (await templateNpm.exists()) {
       const spinner = spinnerStart('正在更新模版...')
       await sleep()
-      // 更新 package
-      await templateNpm.update()
-      spinner.stop(true)
-      log.success('更新模版成功')
+      try {
+        // 更新 package
+        await templateNpm.update()
+        log.success('更新模版成功')
+      } catch (error) {
+        throw error
+      } finally {
+        spinner.stop(true)
+      }
     } else {
       const spinner = spinnerStart('正在下载模版...')
       await sleep()
-      // 安装 package
-      await templateNpm.install()
-      spinner.stop(true)
-      log.success('下载模版成功')
+      try {
+        // 安装 package
+        await templateNpm.install()
+        log.success('下载模版成功')
+      } catch (error) {
+        throw error
+      } finally {
+        spinner.stop(true)
+      }
     }
   }
 
