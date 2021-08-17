@@ -4,7 +4,7 @@ const axios = require('axios')
 
 const BASE_URL = process.env.EGG_CLI_BASE_URL
   ? process.env.EGG_CLI_BASE_URL
-  : 'http://book.youbaobao.xyz:7001'
+  : 'http://book.chenhui.xyz:7001'
 
 const request = axios.create({
   baseURL: BASE_URL,
