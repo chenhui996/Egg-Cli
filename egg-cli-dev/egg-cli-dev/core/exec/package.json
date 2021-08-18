@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@egg-cli-dev/package": "file:../../models/package",
-    "@egg-cli-dev/log": "file:../../utils/log"
+    "@egg-cli-dev/log": "file:../../utils/log",
+    "@egg-cli-dev/utils": "file:../../utils/utils"
   }
 }

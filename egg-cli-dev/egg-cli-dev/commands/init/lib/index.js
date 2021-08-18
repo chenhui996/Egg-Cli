@@ -9,7 +9,7 @@ const userHome = require('user-home')
 const Command = require('@egg-cli-dev/command')
 const Package = require('@egg-cli-dev/package')
 const log = require('@egg-cli-dev/log')
-const {spinnerStart, sleep} = require('@egg-cli-dev/utils')
+const {spinnerStart, sleep, execAsync} = require('@egg-cli-dev/utils')
 
 const getProjectTemplate = require('./getProjectTemplate')
 
@@ -18,6 +18,8 @@ const TYPE_COMPONENT = 'component'
 
 const TEMPLATE_TYPE_NORMAL = 'normal'
 const TEMPLATE_TYPE_CUSTOM = 'custom'
+
+const WHITE_COMMAND = ['npm', 'cnpm']
 
 class InitCommand extends Command {
   init() {
@@ -66,8 +68,59 @@ class InitCommand extends Command {
     }
   }
 
+  checkCommand(cmd) {
+    if (WHITE_COMMAND.includes(cmd)) {
+      return cmd
+    }
+    return null
+  }
+
+  async execCommand(command, errMsg) {
+    let ret
+    if (command) {
+      const cmdArray = command.split(' ')
+      const cmd = this.checkCommand(cmdArray[0])
+      if (!cmd) {
+        throw new Error('命令不存在！ 命令：' + command)
+      }
+      const args = cmdArray.slice(1)
+      ret = await execAsync(cmd, args, {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      })
+      if (ret !== 0) {
+        throw new Error(errMsg)
+      }
+      return ret
+    }
+  }
+
   async installNormalTemplate() {
-    console.log('安装标准模版')
+    log.verbose('this.templateInfo', this.templateInfo)
+    // 拷贝模版代码至当前目录
+    let spinner = spinnerStart('正在安装模版...')
+    await sleep()
+    try {
+      const templatePath = path.resolve(
+        this.templateNpm.cacheFilePath,
+        'template',
+      )
+      const targetPath = process.cwd()
+      fse.ensureDirSync(templatePath)
+      fse.ensureDirSync(targetPath)
+      fse.copySync(templatePath, targetPath)
+    } catch (error) {
+      throw error
+    } finally {
+      spinner.stop(true)
+      log.success('模版安装成功')
+    }
+
+    const {installCommand, startCommand} = this.templateInfo
+    // 依赖安装
+    await this.execCommand(installCommand, '依赖安装过程失败！')
+    // 启动命令执行
+    await this.execCommand(startCommand, '项目启动过程失败！')
   }
 
   async installCustomTemplate() {
@@ -111,6 +164,7 @@ class InitCommand extends Command {
         spinner.stop(true)
         if (await templateNpm.exists()) {
           log.success('更新模版成功')
+          this.templateNpm = templateNpm
         }
       }
     } else {
@@ -125,6 +179,7 @@ class InitCommand extends Command {
         spinner.stop(true)
         if (await templateNpm.exists()) {
           log.success('下载模版成功')
+          this.templateNpm = templateNpm
         }
       }
     }
@@ -169,6 +224,8 @@ class InitCommand extends Command {
         if (confirmDelete) {
           // 启动强制更新 -> 清空当前目录
           fse.emptyDirSync(localPath)
+        } else {
+          return
         }
       }
     }

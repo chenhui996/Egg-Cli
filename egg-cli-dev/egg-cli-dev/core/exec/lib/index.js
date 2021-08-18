@@ -1,9 +1,10 @@
 'use strict'
 
-const cp = require('child_process')
+// const cp = require('child_process')
 const path = require('path')
 const Package = require('@egg-cli-dev/package')
 const log = require('@egg-cli-dev/log')
+const {exec: spawn} = require('@egg-cli-dev/utils')
 
 const SETTINGS = {
   init: '@imooc-cli/init',
@@ -84,12 +85,12 @@ async function exec() {
   }
 }
 
-function spawn(command, args, options) {
-  const win32 = process.platform === 'win32'
-  const cmd = win32 ? 'cmd' : command
-  const cmdArgs = win32 ? ['/c'].concat(cmd, args) : args
+// function spawn(command, args, options) {
+//   const win32 = process.platform === 'win32'
+//   const cmd = win32 ? 'cmd' : command
+//   const cmdArgs = win32 ? ['/c'].concat(cmd, args) : args
 
-  return cp.spawn(cmd, cmdArgs, options || {})
-}
+//   return cp.spawn(cmd, cmdArgs, options || {})
+// }
 
 module.exports = exec
