@@ -4,6 +4,8 @@ const fs = require('fs')
 const path = require('path')
 const inquirer = require('inquirer')
 const fse = require('fs-extra')
+const glob = require('glob')
+const ejs = require('ejs')
 const semver = require('semver')
 const userHome = require('user-home')
 const Command = require('@egg-cli-dev/command')
@@ -43,6 +45,9 @@ class InitCommand extends Command {
       }
     } catch (error) {
       log.error(error.message)
+      if (process.env.LOG_LEVEL === 'verbose') {
+        console.log(error)
+      }
     }
   }
 
@@ -95,8 +100,51 @@ class InitCommand extends Command {
     }
   }
 
+  ejsRender(option) {
+    const dir = process.cwd()
+    return new Promise((resolve, reject) => {
+      glob(
+        '**',
+        {
+          cwd: dir,
+          ignore: option.ignore,
+          nodir: true,
+        },
+        (err, files) => {
+          if (err) {
+            reject(err)
+          }
+          Promise.all(
+            files.map((file) => {
+              // ejs 遍历渲染
+              const filePath = path.join(dir, file)
+              const projectInfo = this.projectInfo
+              return new Promise((resolve1, reject1) => {
+                ejs.renderFile(filePath, projectInfo, {}, (err, result) => {
+                  if (err) {
+                    reject1(err)
+                  } else {
+                    fse.writeFileSync(filePath, result)
+                    resolve1(result)
+                  }
+                })
+              })
+            }),
+          )
+            .then(() => {
+              resolve()
+            })
+            .catch((err) => {
+              reject(err)
+            })
+        },
+      )
+    })
+  }
+
   async installNormalTemplate() {
     log.verbose('this.templateInfo', this.templateInfo)
+    log.verbose('this.templateNpm', this.templateNpm)
     // 拷贝模版代码至当前目录
     let spinner = spinnerStart('正在安装模版...')
     await sleep()
@@ -115,6 +163,10 @@ class InitCommand extends Command {
       spinner.stop(true)
       log.success('模版安装成功')
     }
+
+    // ejs 模版渲染
+    const ignore = ['node_modules/**', 'public/**']
+    await this.ejsRender({ignore})
 
     const {installCommand, startCommand} = this.templateInfo
     // 依赖安装
@@ -318,6 +370,16 @@ class InitCommand extends Command {
       }
     } else if (type === TYPE_COMPONENT) {
     }
+
+    if (projectInfo.projectName) {
+      projectInfo.className = require('kebab-case')(
+        projectInfo.projectName,
+      ).replace(/^-/, '')
+    }
+    if (projectInfo.projectName) {
+      projectInfo.version = projectInfo.projectVersion
+    }
+
     // return 项目的基本信息（object）
     return projectInfo
   }

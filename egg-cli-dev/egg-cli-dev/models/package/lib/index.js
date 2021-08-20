@@ -77,7 +77,7 @@ class Package {
 
   // 更新 Package
   async update() {
-    await this.prepare() 
+    await this.prepare()
     let latestPackageVersion = await getNpmLatestVersion(this.packageName)
     let latestFilePath = this.getSpeficCacheFilePath(latestPackageVersion)
     if (!pathExists(latestFilePath)) {
@@ -87,6 +87,8 @@ class Package {
         registpty: getDefaultRegistry(),
         pkgs: [{name: this.packageName, version: latestPackageVersion}],
       })
+      this.packageVersion = latestPackageVersion
+    } else {
       this.packageVersion = latestPackageVersion
     }
   }
